@@ -169,7 +169,7 @@ def classify_text(text):
     Negative keywords ALWAYS override positive ones (back-order rule)."""
     t = " ".join((text or "").lower().split())
     if any(k in t for k in NEGATIVE_KEYWORDS):
-        return True
+        return False
     if any(k in t for k in POSITIVE_KEYWORDS):
         return True
     return None
