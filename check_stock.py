@@ -179,14 +179,29 @@ def looks_blocked(html):
     return False
 
 
+try:
+    # curl_cffi impersonates a real Chrome browser at the TLS level, which
+    # gets past bot detection on sites like John Lewis, Currys, AO etc.
+    from curl_cffi import requests as cf_requests
+    HAVE_CURL_CFFI = True
+except ImportError:
+    HAVE_CURL_CFFI = False
+
+
 def fetch(url):
     last_err = None
     for attempt in range(FETCH_RETRIES + 1):
         try:
-            resp = requests.get(url, headers=HEADERS, timeout=FETCH_TIMEOUT)
+            if HAVE_CURL_CFFI:
+                resp = cf_requests.get(url, headers=HEADERS,
+                                       timeout=FETCH_TIMEOUT,
+                                       impersonate="chrome")
+            else:
+                resp = requests.get(url, headers=HEADERS,
+                                    timeout=FETCH_TIMEOUT)
             resp.raise_for_status()
             return resp
-        except requests.RequestException as e:
+        except Exception as e:
             last_err = e
             if attempt < FETCH_RETRIES:
                 time.sleep(3 * (attempt + 1))
@@ -282,7 +297,7 @@ def _probe_product_page(url):
     """Fetch one product page and classify it. Returns True/False/None."""
     try:
         html = fetch(url).text
-    except requests.RequestException:
+    except Exception:
         return None
     soup = BeautifulSoup(html, "html.parser")
     # structured data first
