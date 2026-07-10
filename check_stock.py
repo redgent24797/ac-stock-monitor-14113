@@ -1,24 +1,30 @@
 #!/usr/bin/env python3
 """
-Portable Air Conditioner stock monitor  (v2)
+Portable Air Conditioner stock monitor  (v4)
 
 Checks UK retailer category pages for portable AC units coming IN STOCK
 and sends a notification (via ntfy.sh, optionally to email) when a
 product changes from unavailable -> available.
 
 IMPORTANT stock rules (per user requirements):
-  - "Back order", "pre-order", "delivers from <date>", "coming soon",
-    "notify me" etc. are treated as NOT in stock, even if the site
-    lets you add the item to the basket.
+  - "Back order", "pre-order", "delivers from <date>", "delivery from
+    4 weeks", "coming soon", "notify me" etc. are treated as NOT in
+    stock, even if the site lets you add the item to the basket.
+  - Visible negative wording on a product page overrides the site's own
+    structured data, which is sometimes optimistic.
   - Only a genuine in-stock signal counts.
 
-v2 changes:
-  - Product-page probing: when a category page lists products without
-    stock wording (Appliances Direct), each product page is fetched and
-    classified individually (capped at PROBE_LIMIT per site).
-  - Deeper/wider product-card detection for sites like Screwfix.
-  - Retries with backoff and a longer timeout (helps John Lewis).
-  - Detects bot-challenge pages and reports them clearly.
+v4 changes:
+  - Browser impersonation via curl_cffi (TLS-level Chrome fingerprint),
+    which unblocks John Lewis and possibly other protected sites.
+
+v3 changes:
+  - Product-page probing now checks visible page text for negative
+    wording BEFORE trusting structured data (fixes Appliances Direct
+    "Delivery from 4 weeks" being counted as in stock).
+  - Added "delivery in ..." style phrases to the negative list.
+  - Notification titles sanitised (emoji stripped cleanly) so ntfy no
+    longer rejects them.
 """
 
 import json
@@ -61,6 +67,7 @@ NEGATIVE_KEYWORDS = [
     "pre-order", "pre order", "preorder",
     "delivers from", "delivery from", "delivered from",
     "dispatched from", "dispatches from", "despatched from",
+    "delivery in", "delivered in", "dispatched in", "despatched in",
     "available from", "available to order",
     "coming soon", "notify me", "email me when", "email when available",
     "expected in stock", "due in stock", "awaiting stock",
@@ -300,14 +307,19 @@ def _probe_product_page(url):
     except Exception:
         return None
     soup = BeautifulSoup(html, "html.parser")
-    # structured data first
+    body = soup.body or soup
+    text = " ".join(body.get_text(" ", strip=True).lower().split())
+    # visible negative wording overrides EVERYTHING, including the site's
+    # structured data ("delivery from 4 weeks" = back order = NOT in stock)
+    if any(k in text for k in NEGATIVE_KEYWORDS):
+        return False
     for p in _jsonld_products(soup):
         avail = _availability_from_offer(p.get("offers"))
         if avail is not None:
             return avail
-    # keyword scan of the page body (negatives override positives)
-    body = soup.body or soup
-    return classify_text(body.get_text(" ", strip=True))
+    if any(k in text for k in POSITIVE_KEYWORDS):
+        return True
+    return None
 
 
 def check_html(site):
@@ -401,7 +413,7 @@ def notify(title, message, url=None, priority="high"):
         log(f"[notify skipped - no NTFY_TOPIC] {title}: {message}")
         return
     headers = {
-        "Title": title.encode("ascii", "ignore").decode(),
+        "Title": title.encode("ascii", "ignore").decode().strip(),
         "Priority": priority,
         "Tags": "snowflake,shopping_cart",
     }
@@ -466,16 +478,16 @@ def main():
         for name, items in by_site.items():
             lines.append(f"{name}: {len(items)} unit(s) now in stock, e.g. "
                          f"{items[0]['title']} {items[0]['price']}")
-        notify("🟢 Multiple portable AC units in stock!",
+        notify("Multiple portable AC units in stock!",
                "\n".join(lines), url=alerts[0][1]["url"])
     else:
         for name, item in alerts:
-            notify(f"🟢 In stock at {name}",
+            notify(f"In stock at {name}",
                    f"{item['title']} {item['price']}".strip(),
                    url=item["url"])
 
     if first_run and FIRST_RUN_SUMMARY:
-        notify("Stock monitor is running ✅",
+        notify("Stock monitor is running",
                "First scan complete. Site status:\n" + "\n".join(site_report),
                priority="default")
 
