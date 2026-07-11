@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Portable Air Conditioner stock monitor  (v4)
+Portable Air Conditioner stock monitor  (v5)
 
 Checks UK retailer category pages for portable AC units coming IN STOCK
 and sends a notification (via ntfy.sh, optionally to email) when a
@@ -8,23 +8,28 @@ product changes from unavailable -> available.
 
 IMPORTANT stock rules (per user requirements):
   - "Back order", "pre-order", "delivers from <date>", "delivery from
-    4 weeks", "coming soon", "notify me" etc. are treated as NOT in
-    stock, even if the site lets you add the item to the basket.
+    4 weeks", "delivery in N weeks", "coming soon", "notify me" etc. are
+    treated as NOT in stock, even if the site lets you add to basket.
   - Visible negative wording on a product page overrides the site's own
     structured data, which is sometimes optimistic.
   - Only a genuine in-stock signal counts.
+
+v5 changes:
+  - Added Comfee (comfee-uk.com).
+  - Fixed a keyword collision where "free delivery" + "in stock" was
+    wrongly read as the lead-time phrase "delivery in"; lead-time
+    detection now requires a number (e.g. "delivery in 4 weeks").
+  - Card detection no longer bleeds a neighbouring product's stock
+    status into the current product on grid/list category pages.
 
 v4 changes:
   - Browser impersonation via curl_cffi (TLS-level Chrome fingerprint),
     which unblocks John Lewis and possibly other protected sites.
 
 v3 changes:
-  - Product-page probing now checks visible page text for negative
-    wording BEFORE trusting structured data (fixes Appliances Direct
-    "Delivery from 4 weeks" being counted as in stock).
-  - Added "delivery in ..." style phrases to the negative list.
-  - Notification titles sanitised (emoji stripped cleanly) so ntfy no
-    longer rejects them.
+  - Product-page probing checks visible page text for negative wording
+    BEFORE trusting structured data.
+  - Notification titles sanitised so ntfy no longer rejects them.
 """
 
 import json
@@ -67,7 +72,6 @@ NEGATIVE_KEYWORDS = [
     "pre-order", "pre order", "preorder",
     "delivers from", "delivery from", "delivered from",
     "dispatched from", "dispatches from", "despatched from",
-    "delivery in", "delivered in", "dispatched in", "despatched in",
     "available from", "available to order",
     "coming soon", "notify me", "email me when", "email when available",
     "expected in stock", "due in stock", "awaiting stock",
@@ -149,6 +153,12 @@ SITES = [
         "url": "https://ao.com/l/air_conditioners/1/55-143-796-823-825/",
         "product_pattern": r"/product/",
     },
+    {
+        "name": "Comfee",
+        "type": "html",
+        "url": "https://www.comfee-uk.com/portable-air-conditioning",
+        "product_pattern": r"/product-page/",
+    },
 ]
 
 # ---------------------------------------------------------------------------
@@ -169,6 +179,11 @@ def classify_text(text):
     Negative keywords ALWAYS override positive ones (back-order rule)."""
     t = " ".join((text or "").lower().split())
     if any(k in t for k in NEGATIVE_KEYWORDS):
+        return False
+    # Lead-time wording like "delivery in 4 weeks" / "dispatched in 3-5 days"
+    # means not on the shelf. Require a number so it doesn't collide with
+    # innocuous phrases like "free delivery in stock".
+    if re.search(r"(deliver|dispatch|despatch)\w*\s+in\s+\d", t):
         return False
     if any(k in t for k in POSITIVE_KEYWORDS):
         return True
@@ -313,6 +328,8 @@ def _probe_product_page(url):
     # structured data ("delivery from 4 weeks" = back order = NOT in stock)
     if any(k in text for k in NEGATIVE_KEYWORDS):
         return False
+    if re.search(r"(deliver|dispatch|despatch)\w*\s+in\s+\d", text):
+        return False
     for p in _jsonld_products(soup):
         avail = _availability_from_offer(p.get("offers"))
         if avail is not None:
@@ -358,8 +375,8 @@ def check_html(site):
 
     # ---- Pass 2: classify the product card around each link ----
     if not site.get("probe_products"):
+        pattern = re.compile(site.get("product_pattern", r"/p/"))
         for a in soup.find_all("a", href=True):
-            pattern = re.compile(site.get("product_pattern", r"/p/"))
             if not pattern.search(a["href"]):
                 continue
             url = urljoin(site["url"], a["href"].split("?")[0].split("#")[0])
@@ -371,16 +388,30 @@ def check_html(site):
             if title_excluded(title):
                 seen.add(url)
                 continue
-            # climb ancestors until the surrounding text yields a verdict
+            # Climb ancestors to find the stock verdict, but never climb
+            # into a container that also holds OTHER product links (that
+            # would let a neighbour's status bleed in). Check the current
+            # card's own text at each level first.
             card, status = a, None
             for _ in range(10):
-                if card.parent is None:
-                    break
-                card = card.parent
                 text = card.get_text(" ", strip=True)
-                status = classify_text(text)
-                if status is not None or len(text) > 600:
+                verdict = classify_text(text)
+                if verdict is not None:
+                    status = verdict
                     break
+                parent = card.parent
+                if parent is None:
+                    break
+                # would climbing to parent pull in a different product?
+                others = sum(1 for x in parent.find_all("a", href=True)
+                             if pattern.search(x["href"])
+                             and urljoin(site["url"],
+                                 x["href"].split("?")[0].split("#")[0]) != url)
+                if others > 0:
+                    break  # stop; parent spans multiple products
+                if len(text) > 600:
+                    break
+                card = parent
             if status is None:
                 continue
             seen.add(url)
