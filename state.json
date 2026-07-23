@@ -241,17 +241,17 @@
  },
  "Appliances Direct|https://www.appliancesdirect.co.uk/p/ecoplus10hpw/electriq-ecoplus10hpw-air-conditioner": {
   "in_stock": true,
-  "last_seen": 1784763841,
+  "last_seen": 1784798114,
   "title": "electriQ EcoPlus 10000 BTU  A+ Low Energy  Smart Quiet Portable AC & Heater"
  },
  "Appliances Direct|https://www.appliancesdirect.co.uk/p/ecosilent14w/electriq-ecosilent14w-air-conditioner": {
   "in_stock": true,
-  "last_seen": 1784763841,
+  "last_seen": 1784798114,
   "title": "electriQ EcoSilent 14000 BTU Smart\u00a0Quiet Portable Air Conditioner"
  },
  "Appliances Direct|https://www.appliancesdirect.co.uk/p/pac1218/fu-pac1218-air-conditioner": {
   "in_stock": true,
-  "last_seen": 1784763841,
+  "last_seen": 1784798114,
   "title": "12000 BTU Portable Air Conditioner with Heat Pump"
  },
  "Appliances Direct|https://www.appliancesdirect.co.uk/p/pac9016/fu-pac9016-air-conditioner": {
@@ -261,13 +261,18 @@
  },
  "Appliances Direct|https://www.appliancesdirect.co.uk/p/pmf09ch/vox-pmf09ch-air-conditioner": {
   "in_stock": true,
-  "last_seen": 1784763841,
+  "last_seen": 1784798114,
   "title": "VOX PMF09CH 9000 BTU Portable Air Conditioner with Heat Pump"
  },
  "Appliances Direct|https://www.appliancesdirect.co.uk/p/pmj09c/vox-pmj09c-air-conditioner": {
   "in_stock": true,
-  "last_seen": 1784763841,
+  "last_seen": 1784798114,
   "title": "VOX PMJ09C 9000 BTU Portable Air Conditioner"
+ },
+ "Appliances Direct|https://www.appliancesdirect.co.uk/p/pqf12ch/vox-pqf12ch-air-conditioner": {
+  "in_stock": true,
+  "last_seen": 1784798114,
+  "title": "VOX PQF12CH 12000 BTU Portable Air Conditioner with Heat Pump"
  },
  "Appliances Direct|https://www.appliancesdirect.co.uk/p/tac0924wc/haverland-tac0924wc-air-conditioner": {
   "in_stock": false,
@@ -275,8 +280,8 @@
   "title": "Haverland 9000 BTU\u00a0Smart Portable Air Conditioner"
  },
  "Appliances Direct|https://www.appliancesdirect.co.uk/p/wac1205g/woods-wac1205g-air-conditioner": {
-  "in_stock": false,
-  "last_seen": 1784406750,
+  "in_stock": true,
+  "last_seen": 1784798114,
   "title": "Woods Cortina 12000 BTU Quiet Portable Air Conditioner with HEPA Purifier & Free Cooling"
  },
  "Currys|https://www.currys.co.uk/products/bosch-cool-2000-portable-3in1-air-conditioner-and-dehumidifier-white-10304908.html": {
@@ -331,47 +336,47 @@
  },
  "De'Longhi|https://www.delonghi.com/en-gb/p/portable-air-conditioners-pacem82k.1-pinguino-portable-air-conditioner/PACEM82K.1.html": {
   "in_stock": false,
-  "last_seen": 1784763874,
+  "last_seen": 1784798147,
   "title": "View PACEM82K.1 Pinguino Portable air conditioner"
  },
  "De'Longhi|https://www.delonghi.com/en-gb/p/portable-air-conditioners-pacem90k.1silent-pinguino-portable-air-conditioner/PACEM90K.1SILENT.html": {
   "in_stock": false,
-  "last_seen": 1784763874,
+  "last_seen": 1784798147,
   "title": "View PACEM90K.1SILENT Pinguino Portable air conditioner"
  },
  "De'Longhi|https://www.delonghi.com/en-gb/p/portable-air-conditioners-pacem93k.1silent-pinguino-portable-air-conditioner/PACEM93K.1SILENT.html": {
   "in_stock": false,
-  "last_seen": 1784763874,
+  "last_seen": 1784798147,
   "title": "View PACEM93K.1SILENT Pinguino Portable air conditioner"
  },
  "De'Longhi|https://www.delonghi.com/en-gb/p/portable-air-conditioners-pacex100silent-ex2-pinguino-portable-air-conditioner/PACEX100SILENT+EX%3A2.html": {
   "in_stock": false,
-  "last_seen": 1784763874,
+  "last_seen": 1784798147,
   "title": "View PACEX100SILENT EX:2 Pinguino Portable air conditioner"
  },
  "De'Longhi|https://www.delonghi.com/en-gb/p/portable-air-conditioners-pinguino-compact-portable-air-conditioner-pac-es72-classic/PACES72CLASSIC.html": {
   "in_stock": false,
-  "last_seen": 1784763874,
+  "last_seen": 1784798147,
   "title": "View Pinguino Compact portable air conditioner PAC ES72 CLASSIC"
  },
  "De'Longhi|https://www.delonghi.com/en-gb/p/portable-air-conditioners-pinguino-compact-portable-air-conditioner-pac-es72-young/PACES72YOUNG.html": {
   "in_stock": false,
-  "last_seen": 1784763874,
+  "last_seen": 1784798147,
   "title": "View Pinguino Compact portable air conditioner PAC ES72 YOUNG"
  },
  "De'Longhi|https://www.delonghi.com/en-gb/p/portable-air-conditioners-pinguino-extreme-portable-air-conditioner-pacex93extreme/PACEX93EXTREME.html": {
   "in_stock": false,
-  "last_seen": 1784763874,
+  "last_seen": 1784798147,
   "title": "View Pinguino Extreme portable air conditioner PACEX93EXTREME"
  },
  "De'Longhi|https://www.delonghi.com/en-gb/p/portable-air-conditioners-pinguino-gentlejet-inverter-portable-air-conditioner-pacap130igentlejet/PACAP130IGENTLEJET.html": {
   "in_stock": false,
-  "last_seen": 1784763874,
+  "last_seen": 1784798147,
   "title": "View Pinguino GentleJet Inverter portable air conditioner PACAP130IGENTLEJET"
  },
  "De'Longhi|https://www.delonghi.com/en-gb/p/portable-air-conditioners-pinguino-gentlejet-portable-air-conditioner-pacap98gentlejet/PACAP98GENTLEJET.html": {
   "in_stock": false,
-  "last_seen": 1784763874,
+  "last_seen": 1784798147,
   "title": "View Pinguino GentleJet portable air conditioner PACAP98GENTLEJET"
  },
  "John Lewis|https://www.johnlewis.com/meaco-cirro-14000-btu-smart-portable-air-conditioner-and-heater-white/p115462789": {
@@ -426,22 +431,22 @@
  },
  "Screwfix|https://www.screwfix.com/p/air-conditioning-unit-5000btu/931ax": {
   "in_stock": false,
-  "last_seen": 1784763863,
+  "last_seen": 1784798135,
   "title": "Air Conditioning Unit 5000BTU"
  },
  "Screwfix|https://www.screwfix.com/p/blyss-a018i-09c-local-air-conditioner-9000btu/730xg": {
   "in_stock": false,
-  "last_seen": 1784763863,
+  "last_seen": 1784798135,
   "title": "Blyss A018I-09C Local Air Conditioner 9000BTU"
  },
  "Screwfix|https://www.screwfix.com/p/blyss-a018i-12ch-reversible-air-conditioner-12-000btu/835xg": {
   "in_stock": false,
-  "last_seen": 1784763863,
+  "last_seen": 1784798135,
   "title": "Blyss A018I-12CH Reversible Air Conditioner 12,000BTU"
  },
  "Screwfix|https://www.screwfix.com/p/refurb-5ltr-air-cooler/616ll": {
   "in_stock": true,
-  "last_seen": 1784580355,
+  "last_seen": 1784798135,
   "title": "0 out of 5 stars total 0 ratings"
  }
 }
